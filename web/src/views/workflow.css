@@ -1,0 +1,813 @@
+/* ================================================================ workflow overlay (repair / tuning installation) */
+
+.wf {
+  position: fixed;
+  top: 9vh;
+  right: 1.5rem;
+  width: 22rem;
+  pointer-events: none;
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, rgba(28, 30, 36, 0.95) 0%, rgba(14, 15, 19, 0.96) 100%);
+  border: 1px solid var(--c-line-strong);
+  box-shadow: var(--shadow-win), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  /* no backdrop-filter: FiveM NUI is rendered off the game, blur over transparent pixels turns black */
+  overflow: hidden;
+  animation: slide-in-right 0.35s var(--ease) both;
+  z-index: 50;
+}
+
+.wf::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  width: 4rem;
+  height: 0.2rem;
+  background: repeating-linear-gradient(-45deg, var(--c-accent) 0 0.4rem, #15161a 0.4rem 0.8rem);
+  border-radius: 0 0 0.2rem 0.2rem;
+}
+
+/* ----------------------------------------------------------------- head */
+
+.wf__head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem 0.75rem;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.016) 0, rgba(255, 255, 255, 0.016) 1px, transparent 1px, transparent 3px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01));
+}
+
+.wf__icon {
+  width: 2.3rem;
+  height: 2.3rem;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-md);
+  color: var(--c-accent);
+  background: linear-gradient(145deg, rgba(255, 155, 0, 0.22), rgba(255, 155, 0, 0.05));
+  border: 1px solid rgba(255, 155, 0, 0.35);
+  animation: pulse-glow 2s ease-in-out infinite;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.wf__icon svg {
+  animation: wf-pop 0.4s var(--ease) both;
+}
+.wf.is-finished .wf__icon {
+  color: var(--c-optimal);
+  background: var(--c-optimal-soft);
+  border-color: rgba(61, 214, 140, 0.4);
+  animation: none;
+}
+.wf.is-errors .wf__icon {
+  color: var(--c-failed);
+  background: var(--c-failed-soft);
+  border-color: rgba(255, 77, 94, 0.4);
+  animation: none;
+}
+/* paused – a step waits for parts from the storage */
+.wf.is-fetching .wf__icon {
+  color: var(--c-worn);
+  background: linear-gradient(145deg, rgba(245, 197, 66, 0.2), rgba(245, 197, 66, 0.05));
+  border-color: rgba(245, 197, 66, 0.4);
+  animation: wf-pulse-amber 2s ease-in-out infinite;
+}
+
+.wf__title {
+  font-family: var(--f-head);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wf__count {
+  flex: 0 0 auto;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--c-accent);
+  transition: color 0.3s ease;
+}
+.wf__count .dim {
+  font-size: 0.95rem;
+}
+.wf.is-finished .wf__count {
+  color: var(--c-optimal);
+}
+.wf.is-errors .wf__count {
+  color: var(--c-failed);
+}
+
+.wf__bar {
+  height: 0.3rem;
+  background: rgba(0, 0, 0, 0.45);
+}
+.wf__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff8a00, #ffc04d);
+  box-shadow: 0 0 0.6rem rgba(255, 155, 0, 0.7);
+  transition: width 0.5s var(--ease);
+}
+.wf__bar-fill.has-errors {
+  background: linear-gradient(90deg, #ff8a00, #ff4d5e);
+}
+.wf.is-finished .wf__bar-fill {
+  background: linear-gradient(90deg, #25b870, #52e19b);
+  box-shadow: 0 0 0.6rem rgba(61, 214, 140, 0.6);
+}
+
+/* ----------------------------------------------------------------- step list */
+
+.wf__steps {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0.6rem;
+  max-height: 25rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  transition: max-height 0.3s var(--ease);
+}
+/* the waiting panel takes the room – the list stays compact (current step is kept centred) */
+.wf.is-waiting .wf__steps {
+  max-height: 12rem;
+}
+.wf__steps.fade-bottom {
+  -webkit-mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 80%, transparent 100%);
+}
+.wf__steps.fade-top {
+  -webkit-mask-image: linear-gradient(0deg, #000 80%, transparent 100%);
+  mask-image: linear-gradient(0deg, #000 80%, transparent 100%);
+}
+.wf__steps.fade-top.fade-bottom {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+}
+
+.wf-step {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0 0.6rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* timeline connector from this step's icon to the next one (icon box 1.25rem at padding 0.55rem / 0.45rem) */
+.wf-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: calc(0.55rem + 0.625rem - 1px);
+  top: 1.85rem;
+  bottom: calc(-0.5rem - 2px);
+  width: 2px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background-color 0.4s ease;
+}
+.wf-step--done:not(:last-child)::after {
+  background: rgba(61, 214, 140, 0.32);
+}
+.wf-step--failed:not(:last-child)::after {
+  background: rgba(255, 77, 94, 0.3);
+}
+
+/* basis 0: a long label never pushes the status onto its own line – only the detail row wraps */
+.wf-step > .grow {
+  flex: 1 1 0;
+}
+
+.wf-step__icon {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-dim);
+}
+.wf-step--active .wf-step__icon,
+.wf-step--waiting .wf-step__icon,
+.wf-step--done .wf-step__icon,
+.wf-step--failed .wf-step__icon,
+.wf-step--skipped .wf-step__icon {
+  animation: wf-pop 0.35s var(--ease) both;
+}
+
+.wf-step__label {
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  transition: color 0.3s ease;
+}
+.wf-step__msg {
+  margin-top: 0.1rem;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  color: var(--c-muted);
+}
+.wf-step__status {
+  flex: 0 0 auto;
+  margin-top: 0.2rem;
+  font-family: var(--f-head);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-dim);
+  transition: color 0.3s ease;
+}
+
+/* pending */
+.wf-step--pending {
+  opacity: 0.6;
+}
+
+/* active – highlighted, accent edge */
+.wf-step--active {
+  background-color: rgba(255, 155, 0, 0.1);
+  border-color: rgba(255, 155, 0, 0.35);
+  box-shadow: inset 0.15rem 0 0 var(--c-accent), 0 0.3rem 1rem rgba(0, 0, 0, 0.25);
+}
+.wf-step--active .wf-step__icon,
+.wf-step--active .wf-step__status {
+  color: var(--c-accent);
+}
+.wf-step--active .wf-step__label {
+  font-weight: 600;
+}
+.wf-step--active .wf-step__msg {
+  color: var(--c-accent-2);
+}
+
+/* waiting – paused for parts: amber edge, the box bobs; green once everything is carried (continue via target) */
+.wf-step--waiting {
+  background-color: rgba(245, 197, 66, 0.09);
+  border-color: rgba(245, 197, 66, 0.35);
+  box-shadow: inset 0.15rem 0 0 var(--c-worn), 0 0.3rem 1rem rgba(0, 0, 0, 0.25);
+}
+.wf-step--waiting .wf-step__icon,
+.wf-step--waiting .wf-step__status {
+  color: var(--c-worn);
+}
+.wf-step--waiting .wf-step__icon svg {
+  animation: wf-bob 1.6s ease-in-out infinite;
+}
+.wf-step--waiting .wf-step__label {
+  font-weight: 600;
+}
+.wf-step--waiting .wf-step__msg {
+  color: #ffe39a;
+}
+.wf-step--waiting.is-ready {
+  background-color: rgba(61, 214, 140, 0.08);
+  border-color: rgba(61, 214, 140, 0.35);
+  box-shadow: inset 0.15rem 0 0 var(--c-optimal), 0 0.3rem 1rem rgba(0, 0, 0, 0.25);
+}
+.wf-step--waiting.is-ready .wf-step__icon,
+.wf-step--waiting.is-ready .wf-step__status {
+  color: var(--c-optimal);
+}
+.wf-step--waiting.is-ready .wf-step__icon svg {
+  animation: none;
+}
+
+/* done – short green flash, then calm */
+.wf-step--done {
+  animation: wf-flash-done 0.9s ease both;
+}
+.wf-step--done .wf-step__icon,
+.wf-step--done .wf-step__status {
+  color: var(--c-optimal);
+}
+.wf-step--done .wf-step__label {
+  color: var(--c-muted);
+}
+
+/* failed – stays tinted, short shake */
+.wf-step--failed {
+  background-color: rgba(255, 77, 94, 0.08);
+  border-color: rgba(255, 77, 94, 0.3);
+  animation: wf-shake 0.4s ease both;
+}
+.wf-step--failed .wf-step__icon,
+.wf-step--failed .wf-step__status,
+.wf-step--failed .wf-step__msg {
+  color: var(--c-failed);
+}
+
+/* skipped */
+.wf-step--skipped {
+  opacity: 0.55;
+}
+.wf-step--skipped .wf-step__label {
+  text-decoration: line-through;
+  color: var(--c-muted);
+}
+
+/* ----------------------------------------------------------------- phase of the active step */
+
+/* own full-width line of the wrapped step (under label + status), indented to the label (icon 1.25rem + gap 0.6rem).
+   Fixed row heights -> known block height (0.3 + 1.2 + 1 rem), max-height animates it in / out */
+.wf-step__detail {
+  flex: 0 0 100%;
+  min-width: 0;
+  max-height: 0;
+  padding-left: 1.85rem;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.3s var(--ease),
+    opacity 0.25s ease;
+}
+.wf-step__detail.is-open {
+  max-height: 2.6rem;
+  opacity: 1;
+}
+
+.wf-phase {
+  padding-top: 0.3rem;
+}
+.wf-phase__label {
+  height: 1.2rem;
+  font-size: 0.8rem;
+  line-height: 1.2rem;
+  color: var(--c-accent-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: wf-phase-in 0.35s var(--ease) both;
+}
+.wf-phase__row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 1rem;
+}
+.wf-phase__count {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-family: var(--f-head);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-dim);
+}
+.wf-phase__count .mono {
+  font-size: 0.72rem;
+  letter-spacing: 0;
+}
+.wf-phase__num {
+  display: inline-block;
+  color: var(--c-text);
+  animation: wf-pop 0.35s var(--ease) both;
+}
+
+.wf-phase__bar {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 0.22rem;
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+/* GPU friendly: only transform is animated, duration / negative delay come from the component */
+.wf-phase__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ff8a00, #ffc04d);
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation-name: wf-phase-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  will-change: transform;
+}
+/* no duration known -> sliding indeterminate segment */
+.wf-phase__bar.is-indeterminate .wf-phase__fill {
+  right: auto;
+  width: 35%;
+  transform: translateX(-100%);
+  animation: wf-phase-indeterminate 1.3s ease-in-out infinite;
+}
+
+/* ----------------------------------------------------------------- waiting for parts (Fetch.Wait) */
+
+/* the component animates the slot height (measured, Web Animations) -> no padding / border on the slot itself */
+.wf-wait-slot {
+  overflow: hidden;
+}
+.wf-wait-slot__pad {
+  padding: 0.1rem 0.6rem 0.6rem;
+}
+
+.wf-wait {
+  position: relative;
+  overflow: hidden;
+  padding: 0.65rem 0.7rem 0.6rem;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(245, 197, 66, 0.35);
+  background-color: rgba(245, 197, 66, 0.07);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 60%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0.3rem 1rem rgba(0, 0, 0, 0.25);
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease;
+}
+.wf-wait.is-ready {
+  border-color: rgba(61, 214, 140, 0.4);
+  background-color: rgba(61, 214, 140, 0.08);
+}
+
+/* hazard stripe on the top edge, slowly running while waiting (transform only), solid green when ready */
+.wf-wait::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -1.2rem;
+  right: 0;
+  height: 0.16rem;
+  background: repeating-linear-gradient(-45deg, var(--c-worn) 0 0.4rem, transparent 0.4rem 0.8rem);
+  opacity: 0.75;
+  animation: wf-stripe 1.2s linear infinite;
+  will-change: transform;
+}
+.wf-wait.is-ready::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--c-optimal), rgba(61, 214, 140, 0.15));
+  opacity: 0.8;
+  animation: none;
+}
+
+.wf-wait__head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.wf-wait__icon {
+  flex: 0 0 auto;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  color: var(--c-worn);
+  background: rgba(245, 197, 66, 0.14);
+  border: 1px solid rgba(245, 197, 66, 0.35);
+  animation: wf-pop 0.4s var(--ease) both;
+}
+.wf-wait__icon svg {
+  animation: wf-hourglass 2.4s var(--ease) infinite;
+}
+.wf-wait.is-ready .wf-wait__icon {
+  color: var(--c-optimal);
+  background: var(--c-optimal-soft);
+  border-color: rgba(61, 214, 140, 0.4);
+}
+.wf-wait.is-ready .wf-wait__icon svg {
+  animation: none;
+}
+
+.wf-wait__title {
+  font-family: var(--f-head);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: var(--c-worn);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+.wf-wait.is-ready .wf-wait__title {
+  color: var(--c-optimal);
+}
+.wf-wait__step {
+  margin-top: 0.1rem;
+  font-size: 0.78rem;
+  line-height: 1.15;
+  color: var(--c-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wf-wait__timer {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 1.35rem;
+  padding: 0 0.4rem;
+  border-radius: var(--r-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--c-muted);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--c-line);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.wf-wait__timer.is-low {
+  color: #ffc2c8;
+  border-color: rgba(255, 77, 94, 0.45);
+  animation: wf-blink 1s ease-in-out infinite;
+}
+.wf-wait__timer.is-low svg {
+  color: var(--c-failed);
+}
+
+/* item list */
+.wf-wait__items {
+  list-style: none;
+  margin: 0.55rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.wf-wait__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: var(--r-sm);
+  background-color: rgba(0, 0, 0, 0.26);
+  border: 1px solid var(--c-line);
+  animation: wf-phase-in 0.35s var(--ease) both;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+.wf-wait__item.is-ok {
+  background-color: rgba(61, 214, 140, 0.07);
+  border-color: rgba(61, 214, 140, 0.22);
+}
+
+.wf-wait__mark {
+  flex: 0 0 auto;
+  width: 1.1rem;
+  height: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-worn);
+  animation: wf-pop 0.35s var(--ease) both;
+}
+.wf-wait__item.is-tool .wf-wait__mark {
+  color: #a9dbff;
+}
+.wf-wait__item.is-ok .wf-wait__mark {
+  color: var(--c-optimal);
+}
+
+.wf-wait__name {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  height: 1.1rem;
+}
+.wf-wait__label {
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+.wf-wait__item.is-ok .wf-wait__label {
+  color: var(--c-muted);
+}
+.wf-wait__tag {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  height: 0.95rem;
+  padding: 0 0.3rem;
+  border-radius: 0.2rem;
+  font-family: var(--f-head);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a9dbff;
+  background: var(--c-info-soft);
+  border: 1px dashed rgba(77, 181, 255, 0.45);
+}
+
+.wf-wait__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.1rem 0.6rem;
+  margin-top: 0.1rem;
+  font-size: 0.7rem;
+  line-height: 1rem;
+  color: var(--c-dim);
+}
+.wf-wait__weight,
+.wf-wait__stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  white-space: nowrap;
+}
+.wf-wait__stock {
+  color: var(--c-muted);
+}
+.wf-wait__stock.is-low {
+  color: var(--c-worn);
+}
+.wf-wait__stock.is-empty {
+  font-weight: 600;
+  color: var(--c-failed);
+}
+
+.wf-wait__qty {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  line-height: 1.1rem;
+}
+.wf-wait__qty b {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--c-worn);
+  animation: wf-pop 0.35s var(--ease) both;
+}
+.wf-wait__item.is-ok .wf-wait__qty b {
+  color: var(--c-optimal);
+}
+
+.wf-wait__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+  font-size: 0.76rem;
+  line-height: 1.25;
+  color: var(--c-muted);
+  animation: fade-in 0.35s ease both;
+}
+.wf-wait__hint svg {
+  flex: 0 0 auto;
+  margin-top: -0.05rem;
+  color: var(--c-worn);
+}
+.wf-wait.is-ready .wf-wait__hint {
+  color: #9ff0c6;
+}
+.wf-wait.is-ready .wf-wait__hint svg {
+  color: var(--c-optimal);
+  animation: wf-tap 1.4s ease-in-out infinite;
+}
+
+/* ----------------------------------------------------------------- footer */
+
+.wf__foot {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.9rem;
+  padding: 0.6rem 1rem 0.7rem;
+  border-top: 1px solid var(--c-line);
+  font-size: 0.82rem;
+  color: var(--c-muted);
+}
+.wf__foot.has-hint {
+  min-height: 3.4rem;
+}
+.wf__foot-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+.wf__hint {
+  margin-top: 0.12rem;
+  font-size: 0.72rem;
+  color: var(--c-dim);
+}
+
+.wf__foot--summary {
+  gap: 1rem;
+  animation: fade-in 0.3s ease both;
+}
+.wf-sum {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--f-head);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.wf-sum b {
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  color: var(--c-text);
+}
+.wf-sum--done svg {
+  color: var(--c-optimal);
+}
+.wf-sum--failed svg {
+  color: var(--c-failed);
+}
+.wf-sum--skipped svg {
+  color: var(--c-dim);
+}
+
+/* ----------------------------------------------------------------- keyframes */
+
+@keyframes wf-pop {
+  0% { opacity: 0; transform: scale(0.45); }
+  60% { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes wf-flash-done {
+  0% { background-color: rgba(61, 214, 140, 0.18); border-color: rgba(61, 214, 140, 0.45); }
+  100% { background-color: transparent; border-color: transparent; }
+}
+
+@keyframes wf-shake {
+  0%, 100% { transform: none; }
+  20% { transform: translateX(-0.2rem); }
+  40% { transform: translateX(0.2rem); }
+  60% { transform: translateX(-0.12rem); }
+  80% { transform: translateX(0.08rem); }
+}
+
+@keyframes wf-phase-in {
+  from { opacity: 0; transform: translateY(0.35rem); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes wf-phase-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes wf-phase-indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(290%); }
+}
+
+@keyframes wf-pulse-amber {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 197, 66, 0.35); }
+  50% { box-shadow: 0 0 0 0.35rem rgba(245, 197, 66, 0); }
+}
+
+@keyframes wf-bob {
+  0%, 100% { transform: none; }
+  50% { transform: translateY(-0.12rem); }
+}
+
+/* one stripe period of a -45deg 0.8rem gradient measured horizontally (0.8 * sqrt 2) -> seamless loop */
+@keyframes wf-stripe {
+  from { transform: translateX(0); }
+  to { transform: translateX(1.1314rem); }
+}
+
+@keyframes wf-hourglass {
+  0%, 70% { transform: none; }
+  100% { transform: rotate(180deg); }
+}
+
+@keyframes wf-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes wf-tap {
+  0%, 100% { transform: none; }
+  40% { transform: translateY(0.1rem) scale(0.92); }
+}
