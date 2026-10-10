@@ -1,4 +1,4 @@
-<img width="1920" height="1080" alt="pls_mechanic_thumbnail_1920" src="https://github.com/user-attachments/assets/cc57098f-97fa-4b6d-8bf7-b8d5e4a2d3cb" />
+![pls_mechanic](https://github.com/user-attachments/assets/cc57098f-97fa-4b6d-8bf7-b8d5e4a2d3cb)
 
 # :wrench: pls_mechanic – Realistic Mechanic Job
 
@@ -19,7 +19,9 @@ Most mechanic scripts are a progress bar and a repaired car. **pls_mechanic turn
 
 Every car on your server ages with its kilometres. Oil runs out, brake pads wear down, a timing belt snaps, a neglected engine starts to misfire – and **the driver feels it on the road**. The mechanic finds the problem with an OBD scanner and fixes it part by part. He opens the hood, slides under the car, drains the oil into a pan and carries the old part out.
 
-:arrow_forward: **[Watch: Trailer]([https://www.youtube.com/watch?v=VIDEO_1_TRAILER](https://youtu.be/tO_KwmeAkJ4))**
+:clapper: **Full preview (16 min)** – everything the script does, in one video:
+
+[![Watch on YouTube](https://img.youtube.com/vi/tO_KwmeAkJ4/hqdefault.jpg)](https://youtu.be/tO_KwmeAkJ4)
 
 ---
 
@@ -38,17 +40,6 @@ Every car on your server ages with its kilometres. Oil runs out, brake pads wear
 | :articulated_lorry: **Field work** | Push, flip, slim jim, impound, flatbed winch, jump start, 5 NPC mission types |
 | :building_construction: **In-game creator** | Unlimited workshops, 11 point types, permission matrix per job grade |
 | :shield: **Secure** | Server-authoritative, secure events, rate limits, mileage and plate-spoof protection |
-
-|   |   |   |
-|:-:|:-:|:-:|
- <img width="1416" height="901" alt="image" src="https://github.com/user-attachments/assets/e975d233-4753-4819-a409-102610bdc037" />
- <img width="1288" height="846" alt="image" src="https://github.com/user-attachments/assets/7fc14192-fdde-4305-8127-d95ac12cd82b" />
-| <img width="1415" height="877" alt="image" src="https://github.com/user-attachments/assets/f786f86a-894f-474f-b296-44ea7095e058" />
- <img width="1422" height="867" alt="image" src="https://github.com/user-attachments/assets/c33814e9-e051-4f68-bad1-cb1c3841bf76" />
-|  |<img width="1466" height="1072" alt="image" src="https://github.com/user-attachments/assets/11ad7ba4-335f-4078-9a64-d5bcefa95426" />
-![Uploading image.png…]()
- | <img width="1460" height="858" alt="image" src="https://github.com/user-attachments/assets/c5daf043-706e-49bf-a0da-d73bcee7cf67" />
-
 
 ---
 
@@ -77,8 +68,6 @@ Every car on your server ages with its kilometres. Oil runs out, brake pads wear
 
 > :eyes: Smoke and steam are networked – everyone around sees a dying car.
 
-
-
 ---
 
 ## :mag: OBD diagnostics
@@ -89,7 +78,7 @@ Every car on your server ages with its kilometres. Oil runs out, brake pads wear
 
 :repeat: The last report can be reopened for 10 minutes without a new scan.
 
-
+![OBD diagnostics report with fault codes](https://github.com/user-attachments/assets/f786f86a-894f-474f-b296-44ea7095e058)
 
 ---
 
@@ -102,7 +91,7 @@ Every car on your server ages with its kilometres. Oil runs out, brake pads wear
 - :arrow_up: **Car lifts** rise smoothly and are synced for everyone. **Car jacks** lift one corner. Some jobs need a lift, a bay or a jack.
 - :x: Cancel anytime with <kbd>X</kbd> or the target on the car.
 
-:arrow_forward: **[Watch: Repair workflow](https://www.youtube.com/watch?v=VIDEO_2_REPAIR_WORKFLOW)**
+![Car on a lift, view from under the car](https://github.com/user-attachments/assets/c5daf043-706e-49bf-a0da-d73bcee7cf67)
 
 ---
 
@@ -117,6 +106,10 @@ Every car on your server ages with its kilometres. Oil runs out, brake pads wear
 - :movie_camera: **Live preview** with an orbit camera and a cart – drafts survive closing the menu.
 - :toolbox: **Step-by-step installation** – the mechanic carries the parts crate, fits each part where it belongs, calibrates on a laptop and tests the result.
 
+|   |   |
+|:-:|:-:|
+| ![Performance tuning – engine stages](https://github.com/user-attachments/assets/2c48df03-b51d-4f99-92ab-3133e17d0f01) | ![Visual tuning – seats with live preview](https://github.com/user-attachments/assets/11ad7ba4-335f-4078-9a64-d5bcefa95426) |
+
 ### :shopping_cart: Customer catalog – the customer picks, the mechanic builds
 
 No more *"a bit more to the left… no, the other spoiler"*. The customer drives into the tuning bay and opens the **Tuning catalog** on their own car.
@@ -129,11 +122,7 @@ No more *"a bit more to the left… no, the other spoiler"*. The customer drives
 
 > :lock: The server refuses any installed part that isn't in the order or approved by the customer – even step by step.
 
-|   |   |   |
-|:-:|:-:|:-:|
-| <img width="1362" height="1078" alt="image" src="https://github.com/user-attachments/assets/f8efd17c-654d-4abf-a1a5-9d07aba35c62" />
- | <img width="1342" height="1070" alt="image" src="https://github.com/user-attachments/assets/2c48df03-b51d-4f99-92ab-3133e17d0f01" />
- |  |
+![Customer tuning catalog](https://github.com/user-attachments/assets/f8efd17c-654d-4abf-a1a5-9d07aba35c62)
 
 ---
 
@@ -152,8 +141,9 @@ No more *"a bit more to the left… no, the other spoiler"*. The customer drives
 - :recycle: **Crafting** – replaced parts give salvage (scrap metal, aluminium, rubber, plastic, electronics, used oil). 26 recipes, each with an animated bench scene.
 - :fuelpump: **Public repair stations** – paid self-service repair, optionally only when no mechanic is on duty.
 
-<img width="1507" height="952" alt="image" src="https://github.com/user-attachments/assets/c85ee3f9-2477-472f-af28-11c800f37f5d" />
-
+|   |   |
+|:-:|:-:|
+| ![Parts supplier](https://github.com/user-attachments/assets/c85ee3f9-2477-472f-af28-11c800f37f5d) | ![Workshop prices – labor, markup, commission](https://github.com/user-attachments/assets/7fc14192-fdde-4305-8127-d95ac12cd82b) |
 
 ---
 
@@ -175,6 +165,8 @@ No more *"a bit more to the left… no, the other spoiler"*. The customer drives
 - :closed_lock_with_key: **Permission matrix per job grade** – 17 permissions edited by the boss in a clean UI.
 - Duty system, workshop account through your framework's society, deposits at the computer.
 
+![Permission matrix per job grade](https://github.com/user-attachments/assets/c33814e9-e051-4f68-bad1-cb1c3841bf76)
+
 <details>
 <summary>📦 All 86 items (images included)</summary>
 
@@ -192,7 +184,6 @@ All items use the `mech_` prefix and are mapped in the config, so you can rename
 </details>
 
 ---
-
 
 # :books: Documentation
 
@@ -341,7 +332,9 @@ The NUI is a prebuilt React app (`web/dist`). Its source lives in `web/` (React,
 
 ## 3. Installation
 
-:arrow_forward: **[Watch: Installation tutorial]([https://www.youtube.com/watch?v=VIDEO_5_INSTALL_TUTORIAL](https://youtu.be/1Sn_eW1SCns))**
+:clapper: **Installation tutorial**
+
+[![Installation tutorial](https://img.youtube.com/vi/1Sn_eW1SCns/hqdefault.jpg)](https://youtu.be/1Sn_eW1SCns)
 
 1. **Copy the resource.** Place `pls_mechanic` into your resources folder.
 2. **Add the items.**
