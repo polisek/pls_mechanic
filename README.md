@@ -43,7 +43,8 @@ Every car on your server ages with its kilometres. Oil runs out, brake pads wear
 |:-:|:-:|:-:|
 | <img width="1415" height="877" alt="image" src="https://github.com/user-attachments/assets/f786f86a-894f-474f-b296-44ea7095e058" />
  |  |<img width="1466" height="1072" alt="image" src="https://github.com/user-attachments/assets/11ad7ba4-335f-4078-9a64-d5bcefa95426" />
- |
+ | <img width="1460" height="858" alt="image" src="https://github.com/user-attachments/assets/c5daf043-706e-49bf-a0da-d73bcee7cf67" />
+
 
 ---
 
