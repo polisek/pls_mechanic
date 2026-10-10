@@ -41,7 +41,9 @@ Every car on your server ages with its kilometres. Oil runs out, brake pads wear
 
 |   |   |   |
 |:-:|:-:|:-:|
-| [SCREENSHOT – diagnostics report] | [SCREENSHOT – repair under the car] | [SCREENSHOT – tuning menu] |
+| <img width="1415" height="877" alt="image" src="https://github.com/user-attachments/assets/f786f86a-894f-474f-b296-44ea7095e058" />
+ |  |<img width="1466" height="1072" alt="image" src="https://github.com/user-attachments/assets/11ad7ba4-335f-4078-9a64-d5bcefa95426" />
+ |
 
 ---
 
