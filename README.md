@@ -19,7 +19,7 @@ Most mechanic scripts are a progress bar and a repaired car. **pls_mechanic turn
 
 Every car on your server ages with its kilometres. Oil runs out, brake pads wear down, a timing belt snaps, a neglected engine starts to misfire – and **the driver feels it on the road**. The mechanic finds the problem with an OBD scanner and fixes it part by part. He opens the hood, slides under the car, drains the oil into a pan and carries the old part out.
 
-:arrow_forward: **[Watch: Trailer](https://www.youtube.com/watch?v=VIDEO_1_TRAILER)**
+:arrow_forward: **[Watch: Trailer]([https://www.youtube.com/watch?v=VIDEO_1_TRAILER](https://youtu.be/tO_KwmeAkJ4))**
 
 ---
 
@@ -70,7 +70,7 @@ Every car on your server ages with its kilometres. Oil runs out, brake pads wear
 
 > :eyes: Smoke and steam are networked – everyone around sees a dying car.
 
-[SCREENSHOT – dashboard warning / smoke / overheating steam]
+
 
 ---
 
@@ -82,7 +82,7 @@ Every car on your server ages with its kilometres. Oil runs out, brake pads wear
 
 :repeat: The last report can be reopened for 10 minutes without a new scan.
 
-[SCREENSHOT – diagnostics report]
+
 
 ---
 
@@ -124,9 +124,9 @@ No more *"a bit more to the left… no, the other spoiler"*. The customer drives
 
 |   |   |   |
 |:-:|:-:|:-:|
-| [SCREENSHOT – customer catalog] | [SCREENSHOT – mechanic with the customer's order] | [SCREENSHOT – quote for the customer] |
-
-:arrow_forward: **[Watch: Tuning & customer catalog](https://www.youtube.com/watch?v=VIDEO_3_TUNING)**
+| <img width="1362" height="1078" alt="image" src="https://github.com/user-attachments/assets/f8efd17c-654d-4abf-a1a5-9d07aba35c62" />
+ | <img width="1342" height="1070" alt="image" src="https://github.com/user-attachments/assets/2c48df03-b51d-4f99-92ab-3133e17d0f01" />
+ |  |
 
 ---
 
@@ -145,7 +145,8 @@ No more *"a bit more to the left… no, the other spoiler"*. The customer drives
 - :recycle: **Crafting** – replaced parts give salvage (scrap metal, aluminium, rubber, plastic, electronics, used oil). 26 recipes, each with an animated bench scene.
 - :fuelpump: **Public repair stations** – paid self-service repair, optionally only when no mechanic is on duty.
 
-[SCREENSHOT – supplier + bill]
+<img width="1507" height="952" alt="image" src="https://github.com/user-attachments/assets/c85ee3f9-2477-472f-af28-11c800f37f5d" />
+
 
 ---
 
@@ -157,8 +158,6 @@ No more *"a bit more to the left… no, the other spoiler"*. The customer drives
 - :battery: **Jump start** with visible jumper cables
 - :busts_in_silhouette: **5 NPC mission types** – towing, dead battery, flat tyre, out of fuel, scrapping a wreck. The customer waits by the car, watches you work and pays you in hand.
 - :construction: **Placeable props** – traffic cones, road barriers, work signs, toolbox
-
-:arrow_forward: **[Watch: Field work](https://www.youtube.com/watch?v=VIDEO_4_FIELD_WORK)**
 
 ---
 
@@ -187,22 +186,6 @@ All items use the `mech_` prefix and are mapped in the config, so you can rename
 
 ---
 
-## :bar_chart: Performance
-
-| State | resmon (client) |
-|---|:-:|
-| Idle | `x.xx ms` |
-| Driving (condition model active) | `x.xx ms` |
-| During a repair scene | `x.xx ms` |
-| Tuning menu open | `x.xx ms` |
-
-[SCREENSHOT – resmon / profiler]
-
-- :shield: **Server-authoritative** – permission, duty, distance, location, items and minimum work time are validated on the server.
-- :lock: **Secure events & rate limits**, mileage reports capped to what is physically possible, plate spoofing ignored.
-- :satellite: Workshops synced through GlobalState, vehicle condition through entity statebags.
-
----
 
 # :books: Documentation
 
@@ -351,7 +334,7 @@ The NUI is a prebuilt React app (`web/dist`). Its source lives in `web/` (React,
 
 ## 3. Installation
 
-:arrow_forward: **[Watch: Installation tutorial](https://www.youtube.com/watch?v=VIDEO_5_INSTALL_TUTORIAL)**
+:arrow_forward: **[Watch: Installation tutorial]([https://www.youtube.com/watch?v=VIDEO_5_INSTALL_TUTORIAL](https://youtu.be/1Sn_eW1SCns))**
 
 1. **Copy the resource.** Place `pls_mechanic` into your resources folder.
 2. **Add the items.**
