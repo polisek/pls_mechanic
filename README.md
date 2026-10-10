@@ -1,4 +1,4 @@
-[BANNER – banner image]
+<img width="1920" height="1080" alt="pls_mechanic_thumbnail_1920" src="https://github.com/user-attachments/assets/cc57098f-97fa-4b6d-8bf7-b8d5e4a2d3cb" />
 
 # :wrench: pls_mechanic – Realistic Mechanic Job
 
